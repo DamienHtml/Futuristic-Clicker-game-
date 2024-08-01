@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Clicker Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ecf0f1;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #1abc9c;
+            text-shadow: 0 0 10px #1abc9c, 0 0 20px #16a085, 0 0 30px #0f3d3e;
+            animation: glow 1.5s infinite alternate;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        #counter {
+            font-size: 60px;
+            margin: 20px 0;
+            color: #e74c3c;
+            text-shadow: 0 0 5px #e74c3c;
+            animation: pulse 1s infinite;
+        }
+
+        #clickPower {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-shadow: 0 0 5px #3498db;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 24px;
+            color: #fff;
+            background-color: transparent;
+            border: 2px solid #1abc9c;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #1abc9c;
+        }
+
+        button:hover {
+            background-color: #1abc9c;
+            box-shadow: 0 0 10px #1abc9c, 0 0 20px #16a085, 0 0 30px #0f3d3e;
+        }
+
+        #message {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #f39c12;
+            text-shadow: 0 0 5px #f39c12;
+        }
+
+        #achievementsDropdown, #hackerMenuDropdown {
+            margin-top: 10px;
+            font-size: 18px;
+            position: relative;
+            display: inline-block;
+        }
+
+        #achievementsDropdown button, #hackerMenuDropdown button {
+            padding: 10px 20px;
+            border: 2px solid #1abc9c;
+            border-radius: 5px;
+            background-color: #34495e;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-shadow: 0 0 5px #34495e;
+        }
+
+        #achievementsDropdown button:hover, #hackerMenuDropdown button:hover {
+            background-color: #2c3e50;
+            box-shadow: 0 0 10px #34495e, 0 0 20px #2c3e50;
+        }
+
+        #achievementsList, #hackerMenuList {
+            display: none;
+            position: absolute;
+            background-color: #2c3e50;
+            min-width: 230px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+
+        #achievementsList div, #hackerMenuList div {
+            color: #f1c40f;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #achievementsList div:hover, #hackerMenuList div:hover {
+            background-color: #3d566e;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #34495e;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+            color: #ecf0f1;
+            box-shadow: 0 0 10px #1abc9c;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
+        .modal input[type="number"] {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 10px;
+            border: 1px solid #1abc9c;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Restart Button Styles */
+        #restartButton {
+            padding: 15px 30px;
+            font-size: 24px;
+            color: #fff;
+            background-color: #e74c3c;
+            border: 2px solid #c0392b;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #c0392b;
+        }
+
+        #restartButton:hover {
+            background-color: #c0392b;
+            box-shadow: 0 0 10px #c0392b, 0 0 20px #e74c3c;
+        }
+
+        /* Animations */
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #1abc9c, 0 0 20px #16a085, 0 0 30px #0f3d3e;
+            }
+            to {
+                text-shadow: 0 0 20px #1abc9c, 0 0 30px #16a085, 0 0 40px #0f3d3e;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 5px #e74c3c;
+            }
+            50% {
+                transform: scale(1.1);
+                text-shadow: 0 0 20px #e74c3c, 0 0 30px #c0392b;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Futuristic Clicker Game</h1>
+    <div id="counter">0</div>
+    <div id="clickPower">Click Power: 1</div>
+    <button id="clickButton">Click Me!</button>
+    <button id="upgradeButton">Upgrade Click (Cost: 50)</button>
+    <button id="restartButton" onclick="restartGame()">Restart Game</button> <!-- Restart Button -->
+    <div id="message"></div>
+    <div id="achievementsDropdown">
+        <button onclick="toggleAchievements()">Achievements</button>
+        <div id="achievementsList"></div>
+    </div>
+    <div id="hackerMenuDropdown">
+        <button onclick="toggleHackerMenu()">Hacker Menu</button>
+        <div id="hackerMenuList">
+            <div onclick="hackCounter(1000)">Add 1000 Clicks</div>
+            <div onclick="hackCounter(5000)">Add 5000 Clicks</div>
+            <div onclick="hackCounter(10000)">Add 10000 Clicks</div>
+            <div onclick="hackClickPower()">Upgrade Click Power</div>
+            <div onclick="showModal()">Multiple</div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Customize Your Boost</h2>
+            <p>Select what you want to modify:</p>
+            <div>
+                <button onclick="selectOption('clicks')">Clicks</button>
+                <button onclick="selectOption('power')">Power</button>
+            </div>
+            <div id="clicksInput" style="display:none;">
+                <input type="number" id="clicksAmount" placeholder="Enter number of clicks" />
+                <button onclick="applyClicks()">Apply Clicks</button>
+            </div>
+            <div id="powerInput" style="display:none;">
+                <input type="number" id="powerFactor" placeholder="Enter multiplier factor" />
+                <button onclick="applyPower()">Apply Power</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let counter = 0;
+        let clickValue = 1;
+        let upgradeCost = 50;
+        const counterElement = document.getElementById('counter');
+        const clickPowerElement = document.getElementById('clickPower');
+        const clickButton = document.getElementById('clickButton');
+        const upgradeButton = document.getElementById('upgradeButton');
+        const messageElement = document.getElementById('message');
+        const achievementsList = document.getElementById('achievementsList');
+        const hackerMenuList = document.getElementById('hackerMenuList');
+        let achievements = [];
+        const modal = document.getElementById('myModal');
+        const clicksInput = document.getElementById('clicksInput');
+        const powerInput = document.getElementById('powerInput');
+        let selectedOption = null;
+
+        const achievementMilestones = [
+            { name: "The Start", threshold: 0 },
+            { name: "100 Clicks", threshold: 100 },
+            { name: "500 Clicks", threshold: 500 },
+            { name: "1000 Clicks", threshold: 1000 },
+            { name: "2500 Clicks", threshold: 2500 },
+            { name: "5000 Clicks", threshold: 5000 },
+            { name: "7500 Clicks", threshold: 7500 },
+            { name: "10000 Clicks", threshold: 10000 },
+            { name: "15000 Clicks", threshold: 15000 },
+            { name: "20000 Clicks", threshold: 20000 },
+            { name: "25000 Clicks", threshold: 25000 }
+        ];
+
+        // Award the "The Start" achievement when the game starts
+        window.onload = function() {
+            displayAchievement("The Start");
+        };
+
+        clickButton.addEventListener('click', function() {
+            counter += clickValue;
+            counterElement.textContent = counter;
+            checkAchievements();
+        });
+
+        upgradeButton.addEventListener('click', function() {
+            if (counter >= upgradeCost) {
+                counter -= upgradeCost;
+                clickValue++;
+                upgradeCost *= 2;
+                messageElement.textContent = `Click power upgraded! Next upgrade cost: ${upgradeCost}`;
+                counterElement.textContent = counter;
+                clickPowerElement.textContent = `Click Power: ${clickValue}`;
+                upgradeButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
+            } else {
+                messageElement.textContent = "Not enough clicks to upgrade!";
+            }
+        });
+
+        function checkAchievements() {
+            achievementMilestones.forEach(achievement => {
+                if (counter >= achievement.threshold && !achievements.includes(achievement.name)) {
+                    achievements.push(achievement.name);
+                    displayAchievement(achievement.name);
+                }
+            });
+        }
+
+        function displayAchievement(name) {
+            const achievementElement = document.createElement('div');
+            achievementElement.textContent = `Achievement Unlocked: ${name}`;
+            achievementsList.appendChild(achievementElement);
+        }
+
+        function toggleAchievements() {
+            achievementsList.style.display = achievementsList.style.display === "block" ? "none" : "block";
+        }
+
+        function toggleHackerMenu() {
+            hackerMenuList.style.display = hackerMenuList.style.display === "block" ? "none" : "block";
+        }
+
+        function hackCounter(amount) {
+            counter += amount;
+            counterElement.textContent = counter;
+            checkAchievements();
+        }
+
+        function hackClickPower() {
+            clickValue++;
+            clickPowerElement.textContent = `Click Power: ${clickValue}`;
+        }
+
+        // Show the modal
+        function showModal() {
+            modal.style.display = "flex";
+            selectedOption = null;
+            clicksInput.style.display = "none";
+            powerInput.style.display = "none";
+        }
+
+        // Close the modal
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // Select option
+        function selectOption(option) {
+            selectedOption = option;
+            if (option === 'clicks') {
+                clicksInput.style.display = "block";
+                powerInput.style.display = "none";
+            } else if (option === 'power') {
+                clicksInput.style.display = "none";
+                powerInput.style.display = "block";
+            }
+        }
+
+        // Apply clicks
+        function applyClicks() {
+            const amount = parseInt(document.getElementById('clicksAmount').value, 10);
+            if (!isNaN(amount)) {
+                hackCounter(amount);
+                closeModal();
+            } else {
+                alert("Invalid input. Please enter a valid number.");
+            }
+        }
+
+        // Apply power
+        function applyPower() {
+            const factor = parseFloat(document.getElementById('powerFactor').value);
+            if (!isNaN(factor)) {
+                clickValue *= factor;
+                clickPowerElement.textContent = `Click Power: ${clickValue.toFixed(2)}`;
+                closeModal();
+            } else {
+                alert("Invalid input. Please enter a valid number.");
+            }
+        }
+
+        // Restart the game
+        function restartGame() {
+            counter = 0;
+            clickValue = 1;
+            upgradeCost = 50;
+            achievements = [];
+            counterElement.textContent = counter;
+            clickPowerElement.textContent = `Click Power: ${clickValue}`;
+            upgradeButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
+            achievementsList.innerHTML = '';
+            messageElement.textContent = '';
+            hackerMenuList.style.display = "none";
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
